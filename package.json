@@ -1,0 +1,35 @@
+{
+  "name": "bongranel",
+  "version": "1.0.0",
+  "description": "Bon granel migration from scale to wordpress",
+  "main": "dist/index.js",
+  "scripts": {
+    "start:dev": "tsc -w & nodemon dist/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/RodriFS/bongranel.git"
+  },
+  "author": "Rodrigo F. Sanchez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RodriFS/bongranel/issues"
+  },
+  "homepage": "https://github.com/RodriFS/bongranel#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@typescript-eslint/parser": "^4.31.0",
+    "eslint": "^7.32.0",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.4.0",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.3.0",
+    "sequelize": "^6.6.5",
+    "winston": "^3.3.3"
+  }
+}

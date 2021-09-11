@@ -1,0 +1,71 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "ignorePatterns": ["db-scripts/**", "migrations/**"],
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module"
+  },
+  "plugins": ["jest", "prettier", "@typescript-eslint"],
+  "overrides": [
+    {
+      "files": ["src/*.js"]
+    }
+  ],
+  "rules": {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": true,
+        "classes": true,
+        "variables": true
+      }
+    ],
+    "quotes": [
+      "error",
+      "double",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "eqeqeq": ["error", "smart"],
+    "max-depth": ["warn", 3],
+    "eol-last": ["error", "always"],
+    "linebreak-style": ["error", "unix"],
+    "block-scoped-var": "error",
+    "prefer-const": ["warn"],
+    "prettier/prettier": "error",
+    "no-var": ["warn"],
+    "jest/no-test-callback": "off",
+    "jest/no-mocks-import": "off",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "no-console": "error"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "development_local": {
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "host": "localhost",
+      "user": "root",
+      "database": "pcscale"
+    }
+  },
+  "test_local": {
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "host": "localhost",
+      "user": "root",
+      "database": "test_pcscale"
+    }
+  },
+  "production_local": {
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "host": "localhost",
+      "user": "root",
+      "database": "prod_pcscale"
+    }
+  },
+  "development_remote": {
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "host": "localhost",
+      "user": "root",
+      "database": "wordpress"
+    }
+  },
+  "test_remote": {
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "host": "localhost",
+      "user": "root",
+      "database": "test_wordpress"
+    }
+  },
+  "production_remote": {
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "host": "localhost",
+      "user": "root",
+      "database": "prod_wordpress"
+    }
+  }
+}
