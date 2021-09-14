@@ -1,5 +1,5 @@
 import { Model, DataTypes, Op } from "sequelize";
-import { localDatabase } from "../config/connection";
+import { localDatabase } from "../../config/connection";
 
 export enum Units {
   UNIT = 0,
@@ -63,6 +63,24 @@ Tickets.init(
       type: DataTypes.DECIMAL(7, 3),
       get() {
         return parseFloat(this.getDataValue("Weight"));
+      },
+    },
+    units: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return Units[this.SaleForm];
+      },
+    },
+    productId: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return this.Item;
+      },
+    },
+    amountSold: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return this.Weight;
       },
     },
   },

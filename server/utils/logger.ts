@@ -2,7 +2,7 @@ import winston from "winston";
 import cluster from "cluster";
 import path from "path";
 import { PWD, DEBUG_MODE, ENVIRONMENT } from "../constants/config";
-import { checkDirectory } from "../utils/fileSystem";
+import { checkDirectory } from "./fileSystem";
 
 checkDirectory([PWD, "logs"]);
 

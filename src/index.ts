@@ -1,29 +1,57 @@
-import dotenv from "dotenv";
-dotenv.config();
-import express from "express";
-import { PORT } from "./constants/config";
-import logger from "./utils/logger";
-const app = express();
-import "./daemon";
-import { readDateJson } from "./utils/fileSystem";
-import { sync } from "./daemon";
+import { get, post } from "./api";
+import { clearTable, writeLastConnection, writeProduct } from "./dom";
+import { FindProductResponse, LastConnectionResponse } from "./types/types";
 
-app.use(express.json());
-app.use(express.static("public"));
-app.get("/lastconnection", (_req, res) => {
-  const lastConnection = readDateJson();
-  res.send({ lastConnection });
-});
+const lastConnectionElement = document.getElementById("last-connection");
+const syncButtonElement = document.getElementById("sync-button");
+const findInputElement = document.getElementById("find-product-input") as HTMLInputElement;
+const productListElement = document.getElementById("product-list-container");
+const addTicketInputs = document.getElementsByClassName("add-ticket-input") as HTMLCollectionOf<HTMLInputElement>;
 
-app.get("/sync", async (_req, res) => {
-  await sync();
-  const lastConnection = readDateJson();
-  res.send({ lastConnection });
-});
+const fetchDate = async () => {
+  const response = await get<LastConnectionResponse>("/lastconnection");
+  writeLastConnection(lastConnectionElement!, response.lastConnection);
+};
 
-app.listen(PORT, () => {
-  logger.info(`App listening at http://localhost:${PORT}`);
-});
+const syncNow = async () => {
+  syncButtonElement!.setAttribute("disabled", "true");
+  const response = await get<LastConnectionResponse>("/sync");
+  writeLastConnection(lastConnectionElement!, response.lastConnection);
+  syncButtonElement!.removeAttribute("disabled");
+};
 
-process.on("uncaughtException", (error: Error) => logger.error(error.message));
-process.on("unhandledRejection", (error: Error) => logger.error(error.message));
+const findProduct = async (event: Event) => {
+  event.preventDefault();
+  const value = findInputElement.value;
+  if (!value) {
+    return false;
+  }
+  clearTable(productListElement!);
+  const response = await get<FindProductResponse>(`/product?name=${value}`);
+  response.products.forEach((product) => {
+    const element = writeProduct(product);
+    productListElement!.appendChild(element);
+  });
+  return false;
+};
+
+const addTicket = async () => {
+  const tickets = Array.from(addTicketInputs);
+  if (tickets.some((input) => !input.value)) {
+    return;
+  }
+  const product = tickets.reduce((acc, input) => {
+    acc[input.name] = input.value;
+    return acc;
+  }, {} as Record<string, string | number>);
+  await post<void>("/addticket", product);
+};
+
+fetchDate();
+setInterval(async () => {
+  await fetchDate();
+}, 10000);
+
+document.syncNow = syncNow;
+document.findProduct = findProduct;
+document.addTicket = addTicket;

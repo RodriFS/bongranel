@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.json">
   <link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" href="styles.css">
   <title></title>
 </head>
 
@@ -16,10 +17,39 @@
   </noscript>
 
   <div id="root">
-    <h2>
-      <span>Last Connection: </span><span id="last-connection"></span>
-    </h2>
-    <button id="sync-button" onClick="syncNow()">Sync now!</button>
+    <div id="program-container">
+      <h2>
+        <span>Última Conexión:</span><span id="last-connection"></span>
+        <button id="sync-button" onClick="syncNow()">Sync Ahora!</button>
+      </h2>
+      <form class="search-bar-container" onsubmit="findProduct(event)">
+        Buscar producto:
+        <input type="text" id="find-product-input" placeholder="Escribe aquí el nombre o número de producto"/>
+        <button type="submit" id="find-product-button">Buscar</button>
+      </form>
+      <table >
+        <thead>
+          <tr>
+            <th class="id-column">ID</th>
+            <th class="name-column">Nombre</th>
+            <th class="unit-column">Unidad</th>
+            <th class="limit-column">Limit</th>
+            <th class="total-column">Total</th>
+            <th class="total-column"></th>
+          </tr>
+        </thead>
+        <tbody id="product-list-container">
+        </tbody>
+      </table>
+    </div>
+    <div id="testing-container">
+        Agregar ticket:
+        <label>Item:</label><input type="text" class="add-ticket-input" name="Item" placeholder="Item"/>
+        <label>Nombre:</label><input type="text" class="add-ticket-input" name="Name" placeholder="Nombre"/>
+        <label>Unidad:</label><input type="text" class="add-ticket-input" name="Unit" placeholder="Unidad"/>
+        <label>Peso/Unidad:</label><input type="text" class="add-ticket-input" type="number" name="Weight" placeholder="Peso/Unidad"/>
+        <button type="submit" id="add-ticket-button" onclick="addTicket()">Crear Ticket</button>
+    </div>
   </div>
   <script src="index.js"></script>
 </body>

@@ -1,4 +1,4 @@
-import type { Tickets } from "../db/models/tickets";
+import type { Tickets } from "../db/models/local/tickets";
 
 export const fixNumber = (num: number) => {
   return Math.round(num * 1000) / 1000;

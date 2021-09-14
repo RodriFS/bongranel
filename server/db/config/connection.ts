@@ -1,7 +1,8 @@
 import { Sequelize, Options } from "sequelize";
 import logger from "../../utils/logger";
 import { ENVIRONMENT, DEBUG_DB } from "../../constants/config";
-import configJson from "./config.json";
+import localConfigJson from "./local/config.json";
+import remoteConfigJson from "./remote/config.json";
 
 interface DBConfig {
   [env: string]: Options;
@@ -13,8 +14,8 @@ const logging = (sql: string) => {
   }
 };
 
-const dbConfigLocal = (configJson as DBConfig)[`${ENVIRONMENT}_local`];
-const dbConfigRemote = (configJson as DBConfig)[`${ENVIRONMENT}_remote`];
+const dbConfigLocal = (localConfigJson as DBConfig)[ENVIRONMENT];
+const dbConfigRemote = (remoteConfigJson as DBConfig)[ENVIRONMENT];
 
 dbConfigLocal.logQueryParameters = false;
 dbConfigRemote.logQueryParameters = false;
