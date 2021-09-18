@@ -1,8 +1,8 @@
 import { Sequelize, Options } from "sequelize";
 import logger from "../../utils/logger";
 import { ENVIRONMENT, DEBUG_DB } from "../../constants/config";
-import localConfigJson from "./local/config.json";
-import remoteConfigJson from "./remote/config.json";
+import localConfigJson from "./local/config";
+import remoteConfigJson from "./remote/config";
 
 interface DBConfig {
   [env: string]: Options;

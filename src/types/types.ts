@@ -2,8 +2,8 @@ export interface Product {
   productId: string;
   Name: string;
   units: string;
-  Total: number;
-  Limit: number;
+  quantity: number;
+  lowStock: number;
 }
 
 export interface LastConnectionResponse {

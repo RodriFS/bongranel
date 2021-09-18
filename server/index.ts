@@ -10,7 +10,7 @@ import { readDateJson } from "./utils/fileSystem";
 import { sync } from "./daemon";
 import { Items } from "./db/models/local/items";
 import { Tickets } from "./db/models/local/tickets";
-import { Totals } from "./db/models/remote/totals";
+import { Posts, Totals } from "./db/models/remote/wpdn_postmeta";
 
 const corsOptions = {
   origin: ["http://localhost:8081"],
@@ -38,17 +38,17 @@ app.get("/product", async (req, res) => {
     return res.send({ products: [] });
   }
   const products = await Items.findByName(nameOrId as string);
-  const totals = await Totals.findByProductIds(products.map((p) => p.productId));
+  const totals = await Posts.findByProductIds(products.map((p) => p.productId));
   res.send({
     products: products.map((product) => ({
       ...product.toJSON(),
       ...totals.reduce((acc, t) => {
-        if (t.ProductId === product.productId) {
-          acc.Total = t.Total ?? 0;
-          acc.Limit = t.Limit ?? 0;
+        if (t.productId === product.productId) {
+          acc.quantity = t.quantity ?? 0;
+          acc.lowStock = t.lowStock ?? 0;
         }
         return acc;
-      }, {} as Partial<Totals>),
+      }, {} as Totals),
     })),
   });
 });
@@ -75,27 +75,13 @@ app.post("/change", async (req, res) => {
     logger.error("No change request received");
     return res.sendStatus(400);
   }
-
-  const product = await Totals.findOne({ where: { ProductId: change.id } });
-  if (!product) {
-    logger.error("No total found");
-    return res.sendStatus(400);
-  }
   const parsedAmount = parseFloat(change.amount);
   if (isNaN(parsedAmount)) {
     logger.error("Amount is not a number");
     return res.sendStatus(400);
   }
-  if (change.action === "add") {
-    product.Total += parsedAmount;
-  } else if (change.action === "replace") {
-    product.Total = parsedAmount;
-  } else {
-    logger.error("Action is not valid");
-    return res.sendStatus(400);
-  }
-  await product.save();
 
+  Posts.changeAmount(change.id, change.action, parsedAmount);
   res.sendStatus(200);
 });
 

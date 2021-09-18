@@ -21,7 +21,7 @@ const createEditorElements = (product: Product, parent: HTMLTableRowElement) => 
   parent.appendChild(element);
 };
 export const writeProduct = (product: Product) => {
-  const columns: Array<keyof Product> = ["productId", "Name", "units", "Limit", "Total"];
+  const columns: Array<keyof Product> = ["productId", "Name", "units", "lowStock", "quantity"];
   const productElement = document.createElement("tr");
   columns.forEach((columnName) => {
     const element = document.createElement("td");
