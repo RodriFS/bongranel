@@ -5,8 +5,8 @@ export const get = async <T>(url: string): Promise<T> => {
   return await response.json();
 };
 
-export const post = async <T>(url: string, body: any): Promise<T> => {
-  const response = await fetch(`${SERVER_URL}${url}`, {
+export const post = async (url: string, body: any): Promise<void> => {
+  await fetch(`${SERVER_URL}${url}`, {
     method: "POST",
     body: JSON.stringify(body),
     credentials: "include",
@@ -15,5 +15,4 @@ export const post = async <T>(url: string, body: any): Promise<T> => {
       "Content-Type": "application/json",
     },
   });
-  return await response.json();
 };

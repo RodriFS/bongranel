@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types", "src/types"],
-    "baseUrl": "./src",
+    "baseUrl": "./server",
     "resolveJsonModule": true,
     "sourceMap": true,
-    "outDir": "./public",
+    "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,6 +14,6 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "server"]
+  "include": ["server"],
+  "exclude": ["node_modules", "src", "lastConnection.json"]
 }

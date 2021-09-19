@@ -46,7 +46,7 @@ export class Posts extends Model {
       if (!total) {
         return logger.error(`El total producto Nº${ProductId} no existe en wordpress`);
       }
-      const newTotal = parseInt(total.meta_value ?? 0) - quantity;
+      const newTotal = parseInt(total.meta_value ?? "0") - quantity;
       if (newTotal < 0) {
         logger.warn(`El total del producto Nº${ProductId} es menor a 0`);
         total.meta_value = "0";
@@ -69,7 +69,7 @@ export class Posts extends Model {
       return { error: true };
     }
     if (action === "add") {
-      const newTotal = parseInt(total.meta_value ?? 0) + amount;
+      const newTotal = parseInt(total.meta_value ?? "0") + amount;
       total.meta_value = newTotal.toString();
     } else if (action === "replace") {
       total.meta_value = amount.toString();
