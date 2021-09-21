@@ -106,7 +106,6 @@ typings/
 
 .nuxt
 dist
-public/build
 
 # Gatsby files
 
@@ -117,6 +116,8 @@ public/build
 # https://nextjs.org/blog/next-9-1#public-directory-support
 
 # public
+
+public/build
 
 # vuepress build output
 
@@ -137,3 +138,7 @@ public/build
 # TernJS port file
 
 .tern-port
+
+# System files
+
+.DS_Store
