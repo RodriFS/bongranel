@@ -1,6 +1,9 @@
+const dialectModule = require("mysql2");
+
 export default {
   development: {
     dialect: "mysql",
+    dialectModule,
     logging: true,
     dialectOptions: {
       host: "localhost",
@@ -10,6 +13,7 @@ export default {
   },
   test: {
     dialect: "mysql",
+    dialectModule,
     logging: true,
     dialectOptions: {
       host: "localhost",
@@ -19,6 +23,7 @@ export default {
   },
   production: {
     dialect: "mysql",
+    dialectModule,
     logging: true,
     dialectOptions: {
       host: process.env.REMOTE_HOST_ADDRESS,
