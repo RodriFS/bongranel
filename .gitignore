@@ -106,6 +106,7 @@ typings/
 
 .nuxt
 dist
+public/build
 
 # Gatsby files
 

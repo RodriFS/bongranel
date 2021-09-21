@@ -10,7 +10,7 @@ import { readDateJson } from "./utils/fileSystem";
 import { sync } from "./daemon";
 import { Items } from "./db/models/local/items";
 import { Tickets } from "./db/models/local/tickets";
-import { Posts, Totals } from "./db/models/remote/wpdn_postmeta";
+import { PostMeta, Totals } from "./db/models/remote/wpdn_postmeta";
 
 const corsOptions = {
   origin: ["http://localhost:8081"],
@@ -38,7 +38,7 @@ app.get("/product", async (req, res) => {
     return res.send({ products: [] });
   }
   const products = await Items.findByName(nameOrId as string);
-  const totals = await Posts.findByProductIds(products.map((p) => p.productId));
+  const totals = await PostMeta.findByProductIds(products.map((p) => p.productId));
   res.send({
     products: products.map((product) => ({
       ...product.toJSON(),
@@ -81,7 +81,7 @@ app.post("/change", async (req, res) => {
     return res.sendStatus(400);
   }
 
-  Posts.changeAmount(change.id, change.action, parsedAmount);
+  await PostMeta.changeAmount(change.id, change.action, parsedAmount);
   res.sendStatus(200);
 });
 

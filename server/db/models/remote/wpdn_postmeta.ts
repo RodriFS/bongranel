@@ -1,6 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import logger from "../../../utils/logger";
 import { remoteDatabase } from "../../config/connection";
+import { Posts } from "./wpdn_posts";
 
 export const META_KEYS = {
   Sku: "_sku",
@@ -14,21 +15,28 @@ export interface Totals {
   lowStock: number;
 }
 
-export class Posts extends Model {
+export class PostMeta extends Model {
   public meta_id: string;
   public post_id: string;
   public meta_key: string;
   public meta_value: string;
 
   public static async findByProductIds(ProductId: number[]): Promise<Totals[]> {
-    const posts = await Posts.findAll({ where: { meta_key: META_KEYS.Sku, meta_value: ProductId } });
+    const posts = await PostMeta.findAll({
+      where: { meta_key: META_KEYS.Sku, meta_value: ProductId },
+      include: { model: Posts, where: { post_status: "publish" } },
+    });
 
     return Promise.all(
       posts.map(async (post) => {
-        const total = await Posts.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
-        const lowStock = await Posts.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.LowStock } });
+        const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+        const lowStock = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.LowStock } });
+        if (!post) {
+          return;
+        }
+
         return {
-          productId: parseInt(post.meta_value),
+          productId: parseInt(post?.meta_value),
           quantity: parseInt(total?.meta_value ?? "0"),
           lowStock: parseInt(lowStock?.meta_value ?? "0"),
         };
@@ -37,33 +45,41 @@ export class Posts extends Model {
   }
 
   public static async substractFromTotals(totals: Record<string, number>): Promise<void> {
-    await Object.entries(totals).map(async ([ProductId, quantity]) => {
-      const post = await Posts.findOne({ where: { meta_key: META_KEYS.Sku, meta_value: ProductId } });
-      if (!post) {
-        return logger.error(`El sku del producto Nº${ProductId} no existe en wordpress`);
-      }
-      const total = await Posts.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
-      if (!total) {
-        return logger.error(`El total producto Nº${ProductId} no existe en wordpress`);
-      }
-      const newTotal = parseInt(total.meta_value ?? "0") - quantity;
-      if (newTotal < 0) {
-        logger.warn(`El total del producto Nº${ProductId} es menor a 0`);
-        total.meta_value = "0";
-      } else {
-        total.meta_value = newTotal.toString();
-      }
-      await total.save();
-    });
+    await Promise.all(
+      Object.entries(totals).map(async ([ProductId, quantity]) => {
+        const post = await PostMeta.findOne({
+          where: { meta_key: META_KEYS.Sku, meta_value: ProductId },
+          include: { model: Posts, where: { post_status: "publish" } },
+        });
+        if (!post) {
+          return logger.error(`El sku del producto Nº${ProductId} no existe en wordpress`);
+        }
+        const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+        if (!total) {
+          return logger.error(`El total producto Nº${ProductId} no existe en wordpress`);
+        }
+        const newTotal = parseInt(total.meta_value ?? "0") - quantity;
+        if (newTotal < 0) {
+          logger.warn(`El total del producto Nº${ProductId} es menor a 0`);
+          total.meta_value = "0";
+        } else {
+          total.meta_value = newTotal.toString();
+        }
+        await total.save();
+      })
+    );
   }
 
   public static async changeAmount(ProductId: string, action: string, amount: number) {
-    const post = await Posts.findOne({ where: { meta_key: META_KEYS.Sku, meta_value: ProductId } });
+    const post = await PostMeta.findOne({
+      where: { meta_key: META_KEYS.Sku, meta_value: ProductId },
+      include: { model: Posts, where: { post_status: "publish" } },
+    });
     if (!post) {
       logger.error(`El producto Nº${ProductId} no existe`);
       return { error: true };
     }
-    const total = await Posts.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+    const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
     if (!total) {
       logger.error(`El total del producto Nº${ProductId} no existe`);
       return { error: true };
@@ -81,7 +97,7 @@ export class Posts extends Model {
   }
 }
 
-Posts.init(
+PostMeta.init(
   {
     meta_id: {
       allowNull: false,
@@ -105,3 +121,5 @@ Posts.init(
   },
   { sequelize: remoteDatabase, tableName: "wpdn_postmeta", timestamps: false }
 );
+
+PostMeta.belongsTo(Posts, { foreignKey: "post_id" });

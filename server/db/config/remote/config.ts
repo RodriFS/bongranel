@@ -21,10 +21,9 @@ export default {
     dialect: "mysql",
     logging: true,
     dialectOptions: {
-      host: "localhost",
-      user: "root",
-      database: "prod_wordpress",
-      username: process.env.REMOTE_USERNAME,
+      host: process.env.REMOTE_HOST_ADDRESS,
+      user: process.env.REMOTE_USER,
+      database: process.env.REMOTE_DATABASE,
       password: process.env.REMOTE_PASSWORD,
     },
   },

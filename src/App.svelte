@@ -8,7 +8,9 @@
   <header>
     <nav>
       <Link to="/">Dashboard</Link>
-      <Link to="testing">Testing</Link>
+      {#if process.env.NODE_ENV !== "production"}
+        | <Link to="testing">Testing</Link>
+      {/if}
     </nav>
   </header>
 
@@ -17,9 +19,11 @@
       <Dashboard />
     </Route>
 
-    <Route path="testing">
-      <Testing />
-    </Route>
+    {#if process.env.NODE_ENV !== "production"}
+      <Route path="testing">
+        <Testing />
+      </Route>
+    {/if}
   </main>
 </Router>
 
@@ -29,6 +33,10 @@
     padding: 1em;
     max-width: 240px;
     margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
   }
 
   @media (min-width: 640px) {

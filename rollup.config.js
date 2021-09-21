@@ -83,6 +83,7 @@ export default {
     replace({
       "preventAssignment": true,
       "process.env.PORT": process.env.PORT,
+      "process.env.NODE_ENV": process.env.NODE_ENV,
     }),
   ],
   watch: {

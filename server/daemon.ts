@@ -1,4 +1,4 @@
-import { Posts } from "./db/models/remote/wpdn_postmeta";
+import { PostMeta } from "./db/models/remote/wpdn_postmeta";
 import { INTERVAL } from "./constants/config";
 import { Tickets } from "./db/models/local/tickets";
 import { readDateJson, writeDateJson } from "./utils/fileSystem";
@@ -12,7 +12,7 @@ export const sync = async () => {
 
   logger.info(JSON.stringify(totals, null, 4));
 
-  await Posts.substractFromTotals(totals);
+  await PostMeta.substractFromTotals(totals);
   writeDateJson();
   logger.info(`Last connection: ${new Date()}`);
 };

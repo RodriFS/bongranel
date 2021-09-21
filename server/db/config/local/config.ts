@@ -21,10 +21,9 @@ export default {
     dialect: "mysql",
     logging: true,
     dialectOptions: {
-      host: "localhost",
-      user: "root",
-      database: "prod_pcscale",
-      username: process.env.LOCAL_USERNAME,
+      host: process.env.LOCAL_HOST_ADDRESS,
+      user: process.env.LOCAL_USER,
+      database: process.env.LOCAL_DATABASE,
       password: process.env.LOCAL_PASSWORD,
     },
   },
