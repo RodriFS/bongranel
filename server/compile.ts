@@ -12,10 +12,10 @@ const targets = [
     platform: "Linux",
     binaryName: "bongranelapp",
     os: "linux",
-    arch: "x64",
+    arch: "x86",
   },
 ];
-
+// Linux scale 5.3.0-28-generic #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
 targets.reduce((acc, target) => {
   return acc
     .then(() => {

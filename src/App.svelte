@@ -2,13 +2,14 @@
   import { Router, Route, Link } from "svelte-navigator";
   import Dashboard from "./components/Dashboard.svelte";
   import Testing from "./components/Testing.svelte";
+  const environment = process.env.NODE_ENV;
 </script>
 
 <Router>
   <header>
     <nav>
       <Link to="/">Dashboard</Link>
-      {#if process.env.NODE_ENV !== "production"}
+      {#if environment !== "production"}
         | <Link to="testing">Testing</Link>
       {/if}
     </nav>
@@ -19,7 +20,7 @@
       <Dashboard />
     </Route>
 
-    {#if process.env.NODE_ENV !== "production"}
+    {#if environment !== "production"}
       <Route path="testing">
         <Testing />
       </Route>

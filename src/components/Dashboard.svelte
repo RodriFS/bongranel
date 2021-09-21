@@ -4,7 +4,7 @@
   import type { FindProductResponse, LastConnectionResponse, Product } from "../types";
   import Finder from "./Finder.svelte";
 
-  let productId;
+  let productId: string;
   let products: Product[] = [];
   let lastConnection: string = null;
   let syncNowButtonDisabled: boolean = false;
@@ -47,7 +47,7 @@
     <span>Última Conexión:</span><span id="last-connection">{lastConnection}</span>
     <button disabled={syncNowButtonDisabled} id="sync-button" on:click={syncNow}>Sync Ahora!</button>
   </h2>
-  <Finder {products} {findProduct} {productId} />
+  <Finder {findProduct} bind:productId bind:products />
 </div>
 
 <style>

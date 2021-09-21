@@ -2,18 +2,17 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import { PORT } from "./constants/config";
+import { SERVER_PORT } from "./constants/config";
 import logger from "./utils/logger";
 const app = express();
-import "./daemon";
 import { readDateJson } from "./utils/fileSystem";
-import { sync } from "./daemon";
+import { sync } from "./sync";
 import { Items } from "./db/models/local/items";
 import { Tickets } from "./db/models/local/tickets";
 import { PostMeta, Totals } from "./db/models/remote/wpdn_postmeta";
 
 const corsOptions = {
-  origin: ["http://localhost:8081"],
+  origin: ["http://localhost:8081", "http://localhost:5000"],
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -85,8 +84,8 @@ app.post("/change", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(PORT, () => {
-  logger.info(`App listening at http://localhost:${PORT}`);
+app.listen(SERVER_PORT, () => {
+  logger.info(`App listening at http://localhost:${SERVER_PORT}`);
 });
 
 process.on("uncaughtException", (error: Error) => logger.error(error.message));

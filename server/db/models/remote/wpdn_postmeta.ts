@@ -27,12 +27,12 @@ export class PostMeta extends Model {
       include: { model: Posts, where: { post_status: "publish" } },
     });
 
-    return Promise.all(
+    const totals = await Promise.all(
       posts.map(async (post) => {
         const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
         const lowStock = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.LowStock } });
         if (!post) {
-          return;
+          return {};
         }
 
         return {
@@ -42,6 +42,8 @@ export class PostMeta extends Model {
         };
       })
     );
+
+    return totals.filter((t) => t.productId) as Totals[];
   }
 
   public static async substractFromTotals(totals: Record<string, number>): Promise<void> {

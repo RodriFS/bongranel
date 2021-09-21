@@ -82,8 +82,8 @@ export default {
     production && terser(),
     replace({
       "preventAssignment": true,
-      "process.env.PORT": process.env.PORT,
-      "process.env.NODE_ENV": process.env.NODE_ENV,
+      "process.env.SERVER_PORT": process.env.SERVER_PORT,
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
     }),
   ],
   watch: {

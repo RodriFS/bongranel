@@ -7,12 +7,18 @@
 
   const handleAdd = async (productId: string | number) => {
     const response = prompt("Cantidad a agregar");
+    if (!response) {
+      return;
+    }
     await post("/change", { id: productId.toString(), amount: response, action: "add" });
     await findProduct();
   };
 
   const handleEdit = async (productId: string) => {
     const response = prompt("Cantidad a reemplazar");
+    if (!response) {
+      return;
+    }
     await post("/change", { id: productId.toString(), amount: response, action: "replace" });
     await findProduct();
   };
