@@ -27,7 +27,7 @@ export const readDateJson = () => {
 
 export const writeDateJson = () => {
   try {
-    fs.writeFileSync(path.join(PWD, "lastConnection.json"), new Date().toISOString());
+    fs.writeFileSync(path.join(PWD, "lastConnection.json"), new Date().toString());
   } catch (err) {
     logger.warn(err);
   }

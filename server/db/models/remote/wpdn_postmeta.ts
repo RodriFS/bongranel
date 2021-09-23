@@ -54,15 +54,25 @@ export class PostMeta extends Model {
           include: { model: Posts, where: { post_status: "publish" } },
         });
         if (!post) {
-          return logger.error(`El sku del producto Nº${ProductId} no existe en wordpress`);
+          return logger.error(
+            `El sku del producto Nº${ProductId} no existe en wordpress.
+             Cantidad vendida: ${quantity}. Actualizar manualmente.`
+          );
         }
         const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
         if (!total) {
-          return logger.error(`El total producto Nº${ProductId} no existe en wordpress`);
+          return logger.error(`
+          No hay creado un stock para el producto Nº${ProductId} en wordpress.
+          Cantidad vendida: ${quantity}. Actualizar manualmente.`);
         }
         const newTotal = parseInt(total.meta_value ?? "0") - quantity;
         if (newTotal < 0) {
-          logger.warn(`El total del producto Nº${ProductId} es menor a 0`);
+          logger.warn(`
+          El total del producto Nº${ProductId} es menor a 0.
+          Cantidad en wordpress: ${total.meta_value},
+          Cantidad vendida: ${quantity},
+          Venta extra (total - venta): ${newTotal}
+          `);
           total.meta_value = "0";
         } else {
           total.meta_value = newTotal.toString();
@@ -78,13 +88,17 @@ export class PostMeta extends Model {
       include: { model: Posts, where: { post_status: "publish" } },
     });
     if (!post) {
-      logger.error(`El producto Nº${ProductId} no existe`);
+      logger.error(`El producto Nº${ProductId} no existe, SKU no encontrado`);
       return { error: true };
     }
-    const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+    let total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
     if (!total) {
-      logger.error(`El total del producto Nº${ProductId} no existe`);
-      return { error: true };
+      logger.warn(`El total del producto Nº${ProductId} no existe, generando.`);
+      total = await PostMeta.create({
+        post_id: post.post_id,
+        meta_key: META_KEYS.Quantity,
+        meta_value: 0,
+      });
     }
     if (action === "add") {
       const newTotal = parseInt(total.meta_value ?? "0") + amount;
