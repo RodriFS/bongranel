@@ -8,12 +8,6 @@ export const META_KEYS = {
   LowStock: "_low_stock",
 };
 
-export interface Totals {
-  productId: number;
-  quantity: number;
-  lowStock: number;
-}
-
 export class Posts extends Model {
   public ID: number;
   public post_status: string;

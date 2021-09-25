@@ -9,7 +9,9 @@ import { readDateJson } from "./utils/fileSystem";
 import { sync } from "./sync";
 import { Items } from "./db/models/local/items";
 import { Tickets } from "./db/models/local/tickets";
-import { PostMeta, Totals } from "./db/models/remote/wpdn_postmeta";
+import { PostMeta } from "./db/models/remote/wpdn_postmeta";
+import { ProductMeta } from "./db/models/remote/wpdn_wc_product_meta_lookup";
+import { UnitsTotals } from "./constants/units";
 
 const corsOptions = {
   origin: ["http://localhost:8081", "http://localhost:5000"],
@@ -37,17 +39,24 @@ app.get("/product", async (req, res) => {
     return res.send({ products: [] });
   }
   const products = await Items.findByName(nameOrId as string);
-  const totals = await PostMeta.findByProductIds(products.map((p) => p.productId));
+  const totalsGrams = await PostMeta.findByProductIds(products.map((p) => p.productId));
+  const totalsUnits = await ProductMeta.findByProductIds(products.map((p) => p.productId));
+
+  const getTotals = (totals: UnitsTotals[], product: Items) => {
+    return totals.reduce((acc, t) => {
+      if (t.productId === product.productId) {
+        acc.quantity = t.quantity ?? 0;
+        acc.lowStock = t.lowStock ?? 0;
+      }
+      return acc;
+    }, {} as UnitsTotals);
+  };
+
   res.send({
     products: products.map((product) => ({
       ...product.toJSON(),
-      ...totals.reduce((acc, t) => {
-        if (t.productId === product.productId) {
-          acc.quantity = t.quantity ?? 0;
-          acc.lowStock = t.lowStock ?? 0;
-        }
-        return acc;
-      }, {} as Totals),
+      ...getTotals(totalsGrams, product),
+      ...getTotals(totalsUnits, product),
     })),
   });
 });
@@ -80,7 +89,14 @@ app.post("/change", async (req, res) => {
     return res.sendStatus(400);
   }
 
-  await PostMeta.changeAmount(change.id, change.action, parsedAmount);
+  if (change.units?.toLowerCase() === "grams") {
+    await PostMeta.changeAmount(change.id, change.action, parsedAmount);
+  } else if (change.units?.toLowerCase() === "unit") {
+    await ProductMeta.changeAmount(change.id, change.action, parsedAmount);
+  } else {
+    logger.error(`Unit ${change?.units} no existe, el valor debe ser o 'grams' o 'unit'`);
+    return res.sendStatus(400);
+  }
   res.sendStatus(200);
 });
 

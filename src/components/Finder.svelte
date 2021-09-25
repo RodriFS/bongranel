@@ -5,21 +5,21 @@
   export let products: Product[];
   export let findProduct: (event?: Event) => Promise<boolean>;
 
-  const handleAdd = async (productId: string | number) => {
+  const handleAdd = async (productId: string | number, units: string) => {
     const response = prompt("Cantidad a agregar");
     if (!response) {
       return;
     }
-    await post("/change", { id: productId.toString(), amount: response, action: "add" });
+    await post("/change", { id: productId.toString(), units, amount: response, action: "add" });
     await findProduct();
   };
 
-  const handleEdit = async (productId: string) => {
+  const handleEdit = async (productId: string | number, units: string) => {
     const response = prompt("Cantidad a reemplazar");
     if (!response) {
       return;
     }
-    await post("/change", { id: productId.toString(), amount: response, action: "replace" });
+    await post("/change", { id: productId.toString(), units, amount: response, action: "replace" });
     await findProduct();
   };
 </script>
@@ -55,8 +55,8 @@
           <td>{product.units}</td>
           <td>{product.lowStock ?? ""}</td>
           <td>{product.quantity ?? ""}</td>
-          <td><button on:click={() => handleAdd(product.productId)}>Add</button></td>
-          <td><button on:click={() => handleEdit(product.productId)}>Edit</button></td>
+          <td><button on:click={() => handleAdd(product.productId, product.units)}>Add</button></td>
+          <td><button on:click={() => handleEdit(product.productId, product.units)}>Edit</button></td>
         </tr>
       {/each}
     </tbody>

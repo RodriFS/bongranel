@@ -10,6 +10,7 @@ export default {
       user: "root",
       database: "pcscale",
     },
+    timezone: "+02:00",
   },
   test: {
     dialect: "mysql",
@@ -20,6 +21,7 @@ export default {
       user: "root",
       database: "test_pcscale",
     },
+    timezone: "+02:00",
   },
   production: {
     dialect: "mysql",
@@ -31,5 +33,6 @@ export default {
       database: process.env.LOCAL_DATABASE,
       password: process.env.LOCAL_PASSWORD,
     },
+    timezone: "+02:00",
   },
 };

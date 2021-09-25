@@ -1,4 +1,5 @@
 import { Model, DataTypes } from "sequelize";
+import { UnitsTotals } from "../../../constants/units";
 import logger from "../../../utils/logger";
 import { remoteDatabase } from "../../config/connection";
 import { Posts } from "./wpdn_posts";
@@ -9,19 +10,13 @@ export const META_KEYS = {
   LowStock: "_low_stock",
 };
 
-export interface Totals {
-  productId: number;
-  quantity: number;
-  lowStock: number;
-}
-
 export class PostMeta extends Model {
   public meta_id: string;
   public post_id: string;
   public meta_key: string;
   public meta_value: string;
 
-  public static async findByProductIds(ProductId: number[]): Promise<Totals[]> {
+  public static async findByProductIds(ProductId: number[]): Promise<UnitsTotals[]> {
     const posts = await PostMeta.findAll({
       where: { meta_key: META_KEYS.Sku, meta_value: ProductId },
       include: { model: Posts, where: { post_status: "publish" } },
@@ -43,7 +38,7 @@ export class PostMeta extends Model {
       })
     );
 
-    return totals.filter((t) => t.productId) as Totals[];
+    return totals.filter((t) => t.productId) as UnitsTotals[];
   }
 
   public static async substractFromTotals(totals: Record<string, number>): Promise<void> {
