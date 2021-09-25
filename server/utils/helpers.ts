@@ -8,7 +8,7 @@ export const getTotals = (tickets: Tickets[]) => {
   return tickets.reduce(
     (totals, ticket) => {
       const units = ticket.SaleForm === Units.GRAMS ? "grams" : "units";
-      totals[units][ticket.productId] = fixNumber((totals[ticket.productId] ?? 0) + ticket.amountSold);
+      totals[units][ticket.productId] = fixNumber((totals[units][ticket.productId] ?? 0) + ticket.amountSold);
       return totals;
     },
     {
