@@ -1,5 +1,4 @@
 import { Model, DataTypes } from "sequelize";
-import logger from "../../../utils/logger";
 import { remoteDatabase } from "../../config/connection";
 
 export const META_KEYS = {

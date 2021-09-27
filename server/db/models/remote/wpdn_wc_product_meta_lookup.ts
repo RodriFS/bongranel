@@ -26,7 +26,7 @@ export class ProductMeta extends Model {
 
         return {
           productId: parseInt(post?.meta_value),
-          quantity: total.stock_quantity,
+          quantity: total?.stock_quantity ?? 0,
           lowStock: parseInt(lowStock?.meta_value ?? "0"),
         };
       })
