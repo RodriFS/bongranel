@@ -10,7 +10,6 @@ import { sync } from "./sync";
 import { Items } from "./db/models/local/items";
 import { Tickets } from "./db/models/local/tickets";
 import { PostMeta } from "./db/models/remote/wpdn_postmeta";
-import { ProductMeta } from "./db/models/remote/wpdn_wc_product_meta_lookup";
 import { UnitsTotals } from "./constants/units";
 
 const corsOptions = {
@@ -39,8 +38,7 @@ app.get("/product", async (req, res) => {
     return res.send({ products: [] });
   }
   const products = await Items.findByName(nameOrId as string);
-  const totalsGrams = await PostMeta.findByProductIds(products.map((p) => p.productId));
-  const totalsUnits = await ProductMeta.findByProductIds(products.map((p) => p.productId));
+  const totals = await PostMeta.findByProductIds(products.map((p) => p.productId));
 
   const getTotals = (totals: UnitsTotals[], product: Items) => {
     return totals.reduce((acc, t) => {
@@ -55,8 +53,7 @@ app.get("/product", async (req, res) => {
   res.send({
     products: products.map((product) => ({
       ...product.toJSON(),
-      ...getTotals(totalsGrams, product),
-      ...getTotals(totalsUnits, product),
+      ...getTotals(totals, product),
     })),
   });
 });
@@ -89,14 +86,7 @@ app.post("/change", async (req, res) => {
     return res.sendStatus(400);
   }
 
-  if (change.units?.toLowerCase() === "grams") {
-    await PostMeta.changeAmount(change.id, change.action, parsedAmount);
-  } else if (change.units?.toLowerCase() === "unit") {
-    await ProductMeta.changeAmount(change.id, change.action, parsedAmount);
-  } else {
-    logger.error(`Unit ${change?.units} no existe, el valor debe ser o 'grams' o 'unit'`);
-    return res.sendStatus(400);
-  }
+  await PostMeta.changeAmount(change.id, change.action, parsedAmount, change.units?.toLowerCase());
   res.sendStatus(200);
 });
 

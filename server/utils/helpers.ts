@@ -7,13 +7,13 @@ export const fixNumber = (num: number) => {
 export const getTotals = (tickets: Tickets[]) => {
   return tickets.reduce(
     (totals, ticket) => {
-      const units = ticket.SaleForm === Units.GRAMS ? "grams" : "units";
+      const units = ticket.SaleForm === Units.GRAMS ? "grams" : "unit";
       totals[units][ticket.productId] = fixNumber((totals[units][ticket.productId] ?? 0) + ticket.amountSold);
       return totals;
     },
     {
-      units: {},
+      unit: {},
       grams: {},
-    } as { [key in "units" | "grams"]: Record<string, number> }
+    } as { [key in "unit" | "grams"]: Record<string, number> }
   );
 };

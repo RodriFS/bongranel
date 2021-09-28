@@ -7,6 +7,7 @@ import { Posts } from "./wpdn_posts";
 export const META_KEYS = {
   Sku: "_sku",
   Quantity: "_quantity",
+  Stock: "_stock",
   LowStock: "_low_stock",
 };
 
@@ -24,7 +25,10 @@ export class PostMeta extends Model {
 
     const totals = await Promise.all(
       posts.map(async (post) => {
-        const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+        let total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+        if (!total) {
+          total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Stock } });
+        }
         const lowStock = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.LowStock } });
         if (!post) {
           return {};
@@ -41,7 +45,7 @@ export class PostMeta extends Model {
     return totals.filter((t) => t.productId) as UnitsTotals[];
   }
 
-  public static async substractFromTotals(totals: Record<string, number>): Promise<void> {
+  public static async substractFromTotals(totals: Record<string, number>, units: string): Promise<void> {
     await Promise.all(
       Object.entries(totals).map(async ([ProductId, quantity]) => {
         const post = await PostMeta.findOne({
@@ -54,7 +58,12 @@ export class PostMeta extends Model {
              Cantidad vendida: ${quantity}. Actualizar manualmente.`
           );
         }
-        const total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+        let total: PostMeta;
+        if (units === "grams") {
+          total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+        } else if (units === "unit") {
+          total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Stock } });
+        }
         if (!total) {
           return logger.error(`
           No hay creado un stock para el producto Nº${ProductId} en wordpress.
@@ -77,7 +86,7 @@ export class PostMeta extends Model {
     );
   }
 
-  public static async changeAmount(ProductId: string, action: string, amount: number) {
+  public static async changeAmount(ProductId: string, action: string, amount: number, units: string) {
     const post = await PostMeta.findOne({
       where: { meta_key: META_KEYS.Sku, meta_value: ProductId },
       include: { model: Posts, where: { post_status: "publish" } },
@@ -86,7 +95,15 @@ export class PostMeta extends Model {
       logger.error(`El producto Nº${ProductId} no existe, SKU no encontrado`);
       return { error: true };
     }
-    let total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+    let total: PostMeta;
+    if (units == "grams") {
+      total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
+    } else if (units == "unit") {
+      total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Stock } });
+    } else {
+      logger.error(`Unit ${units} no existe, el valor debe ser o 'grams' o 'unit'`);
+      return;
+    }
     if (!total) {
       logger.warn(`El total del producto Nº${ProductId} no existe, generando.`);
       total = await PostMeta.create({

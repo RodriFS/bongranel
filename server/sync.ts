@@ -4,7 +4,6 @@ import { Tickets } from "./db/models/local/tickets";
 import { readDateJson, writeDateJson } from "./utils/fileSystem";
 import { getTotals } from "./utils/helpers";
 import logger from "./utils/logger";
-import { ProductMeta } from "./db/models/remote/wpdn_wc_product_meta_lookup";
 
 export const sync = async () => {
   const lastDate = readDateJson();
@@ -13,8 +12,8 @@ export const sync = async () => {
 
   tickets?.length && logger.info(JSON.stringify(totals, null, 4));
 
-  await PostMeta.substractFromTotals(totals.grams);
-  await ProductMeta.substractFromTotals(totals.units);
+  await PostMeta.substractFromTotals(totals.grams, "grams");
+  await PostMeta.substractFromTotals(totals.unit, "unit");
   writeDateJson();
   logger.info(`Last connection: ${new Date()}`);
 };
