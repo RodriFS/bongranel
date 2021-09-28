@@ -58,7 +58,7 @@ export class PostMeta extends Model {
              Cantidad vendida: ${quantity}. Actualizar manualmente.`
           );
         }
-        let total: PostMeta;
+        let total: PostMeta | null = null;
         if (units === "grams") {
           total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
         } else if (units === "unit") {
@@ -95,7 +95,7 @@ export class PostMeta extends Model {
       logger.error(`El producto Nº${ProductId} no existe, SKU no encontrado`);
       return { error: true };
     }
-    let total: PostMeta;
+    let total: PostMeta | null = null;
     if (units == "grams") {
       total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
     } else if (units == "unit") {
