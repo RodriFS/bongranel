@@ -1,4 +1,4 @@
-const SERVER_URL = `http://localhost:${process.env.SERVER_PORT}`;
+const SERVER_URL = `http://${window.location.hostname}:${process.env.PORT ?? window.location.port}`;
 
 export const get = async <T>(url: string): Promise<T> => {
   const response = await fetch(`${SERVER_URL}${url}`);

@@ -23,7 +23,6 @@
 
   export const findProduct = async (event?: Event) => {
     event?.preventDefault();
-    console.log(productId);
 
     if (!productId) {
       return false;

@@ -13,7 +13,7 @@ import { PostMeta } from "./db/models/remote/wpdn_postmeta";
 import { UnitsTotals } from "./constants/units";
 
 const corsOptions = {
-  origin: ["http://localhost:8081", "http://localhost:5000"],
+  origin: "*",
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
