@@ -17,7 +17,6 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static("public"));
@@ -60,18 +59,22 @@ app.get("/product", async (req, res) => {
 
 app.post("/addticket", async (req, res) => {
   const product = req.body;
-  if (!product) {
+  if (!product?.Item) {
     logger.error("No ticket received");
     return res.sendStatus(400);
   }
-
-  await Tickets.create({
-    ...product,
-    Weight: parseFloat(product.Weight),
-    SaleForm: product.Unit?.toLowerCase() === "grams" ? 1 : 0,
-    LineDateTime: new Date(),
-  });
-  res.sendStatus(200);
+  try {
+    await Tickets.create({
+      ...product,
+      Weight: parseFloat(product.Weight),
+      SaleForm: product.Unit?.toLowerCase() === "grams" ? 1 : 0,
+      LineDateTime: new Date(),
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    logger.error(err);
+    res.sendStatus(500);
+  }
 });
 
 app.post("/change", async (req, res) => {

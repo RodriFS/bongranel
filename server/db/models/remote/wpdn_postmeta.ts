@@ -26,7 +26,7 @@ export class PostMeta extends Model {
     const totals = await Promise.all(
       posts.map(async (post) => {
         let total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Quantity } });
-        if (!total) {
+        if (!total?.meta_value) {
           total = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.Stock } });
         }
         const lowStock = await PostMeta.findOne({ where: { post_id: post.post_id, meta_key: META_KEYS.LowStock } });
@@ -35,9 +35,9 @@ export class PostMeta extends Model {
         }
 
         return {
-          productId: parseInt(post?.meta_value),
-          quantity: parseInt(total?.meta_value ?? "0"),
-          lowStock: parseInt(lowStock?.meta_value ?? "0"),
+          productId: parseFloat(post?.meta_value),
+          quantity: parseFloat(total?.meta_value ?? "0"),
+          lowStock: parseFloat(lowStock?.meta_value ?? "0"),
         };
       })
     );
@@ -69,7 +69,7 @@ export class PostMeta extends Model {
           No hay creado un stock para el producto Nº${ProductId} en wordpress.
           Cantidad vendida: ${quantity}. Actualizar manualmente.`);
         }
-        const newTotal = parseInt(total.meta_value ?? "0") - quantity;
+        const newTotal = parseFloat(total.meta_value ?? "0") - quantity;
         if (newTotal < 0) {
           logger.warn(`
           El total del producto Nº${ProductId} es menor a 0.
@@ -113,7 +113,7 @@ export class PostMeta extends Model {
       });
     }
     if (action === "add") {
-      const newTotal = parseInt(total.meta_value ?? "0") + amount;
+      const newTotal = parseFloat(total.meta_value ?? "0") + amount;
       total.meta_value = newTotal.toString();
     } else if (action === "replace") {
       total.meta_value = amount.toString();

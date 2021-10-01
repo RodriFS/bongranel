@@ -26,10 +26,10 @@ export class Tickets extends Model {
     return this.Weight;
   }
 
-  public static getLastTickets(lastDate: Date) {
+  public static getLastTickets(lastDate: Date, newDate: Date) {
     return Tickets.findAll({
       where: {
-        [Op.and]: [{ LineDateTime: { [Op.gte]: lastDate } }, { LineDateTime: { [Op.lt]: new Date() } }],
+        [Op.and]: [{ LineDateTime: { [Op.gte]: lastDate } }, { LineDateTime: { [Op.lt]: newDate } }],
       },
     });
   }

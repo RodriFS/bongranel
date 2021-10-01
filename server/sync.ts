@@ -7,15 +7,16 @@ import logger from "./utils/logger";
 
 export const sync = async () => {
   const lastDate = readDateJson();
-  const tickets = await Tickets.getLastTickets(lastDate);
+  const newDate = new Date();
+  const tickets = await Tickets.getLastTickets(lastDate, newDate);
   const totals = getTotals(tickets);
 
   tickets?.length && logger.info(JSON.stringify(totals, null, 4));
 
   await PostMeta.substractFromTotals(totals.grams, "grams");
   await PostMeta.substractFromTotals(totals.unit, "unit");
-  writeDateJson();
-  logger.info(`Last connection: ${new Date()}`);
+  writeDateJson(newDate);
+  logger.info(`Last connection: ${newDate}`);
 };
 
 setInterval(sync, INTERVAL);
