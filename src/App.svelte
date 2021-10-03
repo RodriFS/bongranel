@@ -2,6 +2,7 @@
   import { Router, Route, Link } from "svelte-navigator";
   import Dashboard from "./components/Dashboard.svelte";
   import Testing from "./components/Testing.svelte";
+  import Scale from "./components/Scale.svelte";
   const environment = process.env.NODE_ENV;
 </script>
 
@@ -9,6 +10,7 @@
   <header>
     <nav>
       <Link to="/">Dashboard</Link>
+      | <Link to="/scale">Balanza</Link>
       {#if environment !== "production"}
         | <Link to="testing">Testing</Link>
       {/if}
@@ -16,12 +18,15 @@
   </header>
 
   <main>
-    <Route path="/">
+    <Route path="/" primary={false}>
       <Dashboard />
+    </Route>
+    <Route path="/scale" primary={false}>
+      <Scale />
     </Route>
 
     {#if environment !== "production"}
-      <Route path="testing">
+      <Route path="testing" primary={false}>
         <Testing />
       </Route>
     {/if}

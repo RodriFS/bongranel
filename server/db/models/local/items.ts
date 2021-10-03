@@ -11,6 +11,11 @@ export class Items extends Model {
   public SaleForm: number;
   public Code: number;
   public Name: string;
+  public Text: string;
+  public Text1: string;
+  public Text2: string;
+  public Text3: string;
+  public Price: string;
 
   public get units() {
     return Units[this.SaleForm];
@@ -24,6 +29,14 @@ export class Items extends Model {
     return Items.findAll({
       where: {
         [Op.or]: [{ Name: { [Op.like]: `%${nameOrId}%` } }, { Code: nameOrId }],
+      },
+    });
+  }
+
+  public static findPaginated(currentPage: number, limit: number) {
+    return Items.findAll({
+      where: {
+        [Op.and]: [{ Code: { [Op.gte]: currentPage * limit } }, { Code: { [Op.lt]: currentPage * limit + limit } }],
       },
     });
   }
@@ -59,6 +72,26 @@ Items.init(
       get() {
         return this.Code;
       },
+    },
+    Text: {
+      allowNull: false,
+      type: DataTypes.TEXT,
+    },
+    Text1: {
+      allowNull: false,
+      type: DataTypes.TEXT,
+    },
+    Text2: {
+      allowNull: false,
+      type: DataTypes.TEXT,
+    },
+    Text3: {
+      allowNull: false,
+      type: DataTypes.TEXT,
+    },
+    Price: {
+      allowNull: false,
+      type: DataTypes.DECIMAL(8, 2),
     },
   },
   { sequelize: localDatabase, tableName: "items", timestamps: false }

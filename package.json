@@ -15,7 +15,7 @@
     "db:seed:remote": "sequelize-cli db:seed:all --options-path .sequelizerc.remote",
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --no-clear",
+    "start": "sirv public --no-clear --single",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "repository": {
@@ -49,6 +49,7 @@
     "sequelize-cli": "^6.2.0",
     "svelte": "^3.0.0",
     "svelte-check": "^2.0.0",
+    "svelte-generic-crud-table": "^1.5.92",
     "svelte-preprocess": "^4.0.0",
     "ts-loader": "^9.2.5",
     "tslib": "^2.0.0",
