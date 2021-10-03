@@ -49,7 +49,7 @@
   };
 
   const handleUpdate = async (event: CustomEvent<ScaleEvent>) => {
-    await put(`/scale`, event.detail.body.SKU, event.detail.body);
+    await put(`/scaledata`, event.detail.body.SKU, event.detail.body);
     await reload();
   };
 
