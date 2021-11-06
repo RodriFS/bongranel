@@ -48,6 +48,7 @@
     type="number"
     name="Weight"
     placeholder="Peso/Unidad"
+    step={0.1}
   />
   <button type="submit" id="add-ticket-button" on:click={addTicket}>Crear Ticket</button>
 </div>

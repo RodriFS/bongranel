@@ -9,13 +9,13 @@ import logger from "../utils/logger";
 const router = Router();
 
 router.get("/lastconnection", (_req, res) => {
-  const lastConnection = readDateJson();
+  const lastConnection = readDateJson().toLocaleString();
   res.send({ lastConnection });
 });
 
 router.get("/sync", async (_req, res) => {
   await sync();
-  const lastConnection = readDateJson();
+  const lastConnection = readDateJson().toLocaleString();
   res.send({ lastConnection });
 });
 
@@ -82,14 +82,14 @@ router.post("/change", async (req, res) => {
 });
 
 router.get("/scaledata", async (req, res) => {
-  const id = req.query.id as string;
+  const nameOrId = req.query.id as string;
   const currentPage = req.query.currentPage as string;
   const limit = req.query.limit as string;
 
   let items: Items[] = [];
   let total = 0;
-  if (id) {
-    items = await Items.findAll({ where: { Code: id } });
+  if (nameOrId) {
+    items = await Items.findByName(nameOrId as string);
     total = items.length;
   } else {
     items = await Items.findPaginated(parseInt(currentPage ?? "0"), parseInt(limit ?? "30"));
