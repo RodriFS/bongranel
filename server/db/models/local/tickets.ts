@@ -13,6 +13,8 @@ export class Tickets extends Model {
   public Name: string;
   public LineDateTime: Date;
   public Weight: number;
+  public Amount: number;
+  public Price: number;
 
   public get units() {
     return Units[this.SaleForm];
@@ -82,6 +84,14 @@ Tickets.init(
       get() {
         return this.Weight;
       },
+    },
+    Amount: {
+      allowNull: true,
+      type: DataTypes.DECIMAL(10, 2),
+    },
+    Price: {
+      allowNull: true,
+      type: DataTypes.DECIMAL(8, 2),
     },
   },
   { sequelize: localDatabase, tableName: "ltickets", timestamps: false }

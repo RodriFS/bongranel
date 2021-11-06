@@ -62,9 +62,11 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "fusioncharts": "^3.18.0",
     "mysql2": "^2.3.0",
     "sequelize": "^6.6.5",
     "sirv-cli": "^1.0.0",
+    "svelte-fusioncharts": "^1.0.0",
     "svelte-navigator": "^3.1.5",
     "winston": "^3.3.3"
   }

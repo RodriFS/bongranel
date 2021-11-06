@@ -126,4 +126,18 @@ router.put("/scaledata", async (req, res) => {
   res.sendStatus(200);
 });
 
+router.get("/monthlysales", async (req, res) => {
+  const tickets = await Tickets.findAll();
+  const totals = tickets.reduce((acc, ticket) => {
+    const date = ticket.LineDateTime.toISOString().split("T")[0];
+    if (!acc[date]) {
+      acc[date] = 0;
+    }
+    acc[date] += ticket.Amount * ticket.Price;
+    return acc;
+  }, {});
+  res.send(Object.entries(totals));
+  res.end;
+});
+
 export default router;
