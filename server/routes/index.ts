@@ -6,6 +6,8 @@ import { PostMeta } from "../db/models/remote/wpdn_postmeta";
 import { UnitsTotals } from "../constants/units";
 import { Router } from "express";
 import logger from "../utils/logger";
+import { getData, reduceAllTime } from "../utils/charts";
+import { Op } from "sequelize";
 const router = Router();
 
 router.get("/lastconnection", (_req, res) => {
@@ -126,18 +128,29 @@ router.put("/scaledata", async (req, res) => {
   res.sendStatus(200);
 });
 
-router.get("/monthlysales", async (req, res) => {
-  const tickets = await Tickets.findAll();
-  const totals = tickets.reduce((acc, ticket) => {
-    const date = ticket.LineDateTime.toISOString().split("T")[0];
-    if (!acc[date]) {
-      acc[date] = 0;
-    }
-    acc[date] += ticket.Amount * ticket.Price;
-    return acc;
-  }, {});
-  res.send(Object.entries(totals));
-  res.end;
+router.get("/mostsolditems", async (req, res) => {
+  const firstOfMonth = new Date();
+  firstOfMonth.setDate(1);
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  const firstMonthTickets = await Tickets.findAll({ where: { LineDateTime: { [Op.gte]: firstOfMonth } } });
+  const threeMonthTickets = await Tickets.findAll({ where: { LineDateTime: { [Op.gte]: threeMonthsAgo } } });
+  const sixMonthTickets = await Tickets.findAll({ where: { LineDateTime: { [Op.gte]: sixMonthsAgo } } });
+
+  const firstMonthTotals = reduceAllTime(firstMonthTickets);
+  const threeMongthTotals = reduceAllTime(threeMonthTickets);
+  const sixMongthTotals = reduceAllTime(sixMonthTickets);
+
+  res.send({
+    firstMonth: getData(firstMonthTotals),
+    threeMonths: getData(threeMongthTotals),
+    sixMonths: getData(sixMongthTotals),
+  });
+
+  res.end();
 });
 
 export default router;

@@ -13,7 +13,7 @@ export class Tickets extends Model {
   public Name: string;
   public LineDateTime: Date;
   public Weight: number;
-  public Amount: number;
+  public Amount: string;
   public Price: number;
 
   public get units() {
